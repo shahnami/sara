@@ -3,9 +3,12 @@
   "description": "Stealth Acount Recovery Assistant (SARA) is a web application that helps users recover their FluidKey stealth accounts using the FluidKey Stealth Account Kit.",
   "version": "0.1.0",
   "private": false,
-  "homepage": "https://github.com/shahnami/sara",
   "engines": {
     "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shahnami/sara.git"
   },
   "dependencies": {
     "@fluidkey/stealth-account-kit": "^0.0.30",
