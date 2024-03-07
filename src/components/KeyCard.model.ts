@@ -7,12 +7,9 @@ import { TokenDeployments, config } from "../configs/rainbow.config";
 import { SAFE_PROXY_BYTECODE, getPrivateKeyForSigner } from "../utils/fluidkey";
 
 // Types
-import {
-  Address,
-  FKStealthSafeAddressGenerationParams,
-  SupportedChainId,
-} from "../types";
+import { Address, CreateCSVEntryParameters, SupportedChainId } from "../types";
 
+export const MAX_BATCH_SIZE = 30;
 const balanceOrder = ["ETH", "USDT", "USDC", "DAI"];
 const chainNativeCurrencies = ["SEP"]; // Add any native currencies here that will be represented as ETH
 
@@ -89,42 +86,34 @@ const getBalances = async (address: Address, chainId: SupportedChainId) => {
   return Promise.allSettled([ETHBalance, USDCBalance, USDTBalance, DAIBalance]);
 };
 
-export const createCSVEntry = async (
-  nonce: number,
-  stealthAddresses: string[],
-  settings: FKStealthSafeAddressGenerationParams,
-  chainId: SupportedChainId,
-  meta?: {
-    ephemeralPrivateKey: Address;
-    spendingPrivateKey: Address;
-    spendingPublicKey: Address;
-  }
-) => {
+export const createCSVEntry = async (params: CreateCSVEntryParameters) => {
   try {
-    const { stealthSafeAddress } = await predictStealthSafeAddressWithBytecode({
+    const { stealthSafeAddress } = predictStealthSafeAddressWithBytecode({
       safeProxyBytecode: SAFE_PROXY_BYTECODE,
-      chainId: settings.chainId,
+      chainId: params.settings.chainId,
       threshold: 1,
-      stealthAddresses,
-      useDefaultAddress: settings.useDefaultAddress,
-      safeVersion: settings.safeVersion,
+      stealthAddresses: params.stealthAddresses,
+      useDefaultAddress: params.settings.useDefaultAddress,
+      safeVersion: params.settings.safeVersion,
     });
 
-    const balances = await getBalances(stealthSafeAddress, chainId);
+    const balances = await getBalances(stealthSafeAddress, params.chainId);
     const settledBalances = filterSettledBalances(balances);
     const filledBalances = fillRejectedBalances(settledBalances);
 
     return [
-      nonce.toString(),
+      params.nonce.toString(),
       stealthSafeAddress,
-      ...stealthAddresses,
-      meta ? getPrivateKeyForSigner({ ...meta }) : "-",
+      ...params.stealthAddresses,
+      params.settings.exportPrivateKey
+        ? getPrivateKeyForSigner({ ...params.meta })
+        : "-",
       ...filledBalances,
       settledBalances.length < balances.length ? "Partial Success" : "Success",
     ];
   } catch (e) {
     return [
-      nonce.toString(),
+      params.nonce.toString(),
       "-",
       "-",
       "-",

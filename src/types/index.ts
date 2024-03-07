@@ -17,3 +17,15 @@ export type FKStealthSafeAddressGenerationParams = {
   useDefaultAddress: boolean;
   exportPrivateKey?: boolean;
 };
+
+export type CreateCSVEntryParameters = {
+  nonce: number;
+  stealthAddresses: string[];
+  settings: FKStealthSafeAddressGenerationParams;
+  chainId: SupportedChainId;
+  meta: {
+    ephemeralPrivateKey: Address;
+    spendingPrivateKey: Address;
+    spendingPublicKey: Address;
+  };
+};

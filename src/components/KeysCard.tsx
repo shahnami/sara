@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
+import { parallelLimit } from "async";
 import { SafeVersion } from "@fluidkey/stealth-account-kit/lib/predictStealthSafeAddressTypes";
 import {
   generateStealthAddresses,
@@ -24,7 +25,7 @@ import {
 } from "../types";
 
 // View Model
-import { createCSVEntry } from "./KeyCard.model";
+import { MAX_BATCH_SIZE, createCSVEntry } from "./KeyCard.model";
 
 const SKeyContainerDetails = styled.div`
   display: flex;
@@ -87,7 +88,7 @@ export const KeysCard = (props: ComponentProps) => {
       );
       const spendingPublicKey = spendingAccount.publicKey;
 
-      const promises: Promise<string[]>[] = [];
+      const promises = [];
       for (
         let i = props.settings.startNonce;
         i < props.settings.endNonce;
@@ -104,30 +105,31 @@ export const KeysCard = (props: ComponentProps) => {
           ephemeralPrivateKey: ephemeralPrivateKey,
         });
 
-        promises.push(
-          createCSVEntry(
-            i,
-            stealthAddresses,
-            props.settings,
-            currentChainId as SupportedChainId,
-            props.settings.exportPrivateKey
-              ? {
-                  ephemeralPrivateKey: ephemeralPrivateKey,
-                  spendingPrivateKey: props.keys.spendingPrivateKey,
-                  spendingPublicKey: spendingPublicKey,
-                }
-              : undefined
-          )
-        );
+        const params = {
+          nonce: i,
+          stealthAddresses,
+          settings: props.settings,
+          chainId: currentChainId as SupportedChainId,
+          meta: {
+            ephemeralPrivateKey: ephemeralPrivateKey,
+            spendingPrivateKey: props.keys.spendingPrivateKey,
+            spendingPublicKey: spendingPublicKey,
+          },
+        };
+
+        promises.push(createCSVEntry.bind(null, params));
       }
 
-      const data = await Promise.all(promises);
-
-      setStealthAddressData((prev) => {
-        return [...prev, ...data];
+      parallelLimit(promises, MAX_BATCH_SIZE, (err, results) => {
+        if (err) {
+          console.error(err);
+        } else {
+          setStealthAddressData((prev) => {
+            return [...prev, ...(results as string[][])];
+          });
+        }
+        setIsLoading(false);
       });
-
-      setIsLoading(false);
     }
   };
 
