@@ -17,15 +17,3 @@ export type FKStealthSafeAddressGenerationParams = {
   useDefaultAddress: boolean;
   exportPrivateKey?: boolean;
 };
-
-export type ErrorBalance = {
-  error: any;
-};
-
-export type SettledBalance = GetBalanceReturnType | ErrorBalance;
-
-export const IsErrorBalance = (
-  balanceOrError: SettledBalance
-): balanceOrError is ErrorBalance => {
-  return balanceOrError.hasOwnProperty("error");
-};

@@ -109,7 +109,14 @@ export const KeysCard = (props: ComponentProps) => {
             i,
             stealthAddresses,
             props.settings,
-            currentChainId as SupportedChainId
+            currentChainId as SupportedChainId,
+            props.settings.exportPrivateKey
+              ? {
+                  ephemeralPrivateKey: ephemeralPrivateKey,
+                  spendingPrivateKey: props.keys.spendingPrivateKey,
+                  spendingPublicKey: spendingPublicKey,
+                }
+              : undefined
           )
         );
       }

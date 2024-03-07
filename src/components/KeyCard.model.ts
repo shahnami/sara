@@ -10,36 +10,56 @@ import { SAFE_PROXY_BYTECODE, getPrivateKeyForSigner } from "../utils/fluidkey";
 import {
   Address,
   FKStealthSafeAddressGenerationParams,
-  IsErrorBalance,
   SupportedChainId,
 } from "../types";
 
 const balanceOrder = ["ETH", "USDT", "USDC", "DAI"];
+const chainNativeCurrencies = ["SEP"]; // Add any native currencies here that will be represented as ETH
 
-const handleSettledBalances = (
+const convertToNativeCurrency = (symbol: string) => {
+  return chainNativeCurrencies.includes(symbol) ? "ETH" : symbol;
+};
+
+const fillRejectedBalances = (
+  settledBalances: { value: string; symbol: string }[]
+) => {
+  const missingSymbols = balanceOrder.filter(
+    (symbol) =>
+      !settledBalances
+        .map((balance) => balance.symbol)
+        .map(convertToNativeCurrency)
+        .includes(symbol)
+  );
+  return settledBalances
+    .concat(
+      missingSymbols.map((symbol) => {
+        return { value: "-", symbol };
+      })
+    )
+    .sort((a, b) => {
+      return balanceOrder.indexOf(a.symbol) - balanceOrder.indexOf(b.symbol);
+    })
+    .map((balance) => `${balance.value}`);
+};
+
+const filterSettledBalances = (
   balances: PromiseSettledResult<GetBalanceReturnType>[]
 ) => {
-  // Check if the promise to retrieve a balance was rejected
-  // and return "N/A" if it was, otherwise return the formatted balance
   return balances
-    .map((p) => {
-      if (p.status === "rejected") {
-        return {
-          error: p.reason,
-        };
-      }
-      return p.value as GetBalanceReturnType;
-    })
+    .filter((balance) => balance.status === "fulfilled")
+    .map(
+      (balance) =>
+        (balance as PromiseFulfilledResult<GetBalanceReturnType>).value
+    )
     .sort((a, b) => {
-      if (!IsErrorBalance(a) && !IsErrorBalance(b))
-        return balanceOrder.indexOf(a.symbol) - balanceOrder.indexOf(b.symbol);
-      return -1;
+      return balanceOrder.indexOf(a.symbol) - balanceOrder.indexOf(b.symbol);
     })
-    .map((balance) =>
-      IsErrorBalance(balance)
-        ? "N/A"
-        : formatUnits(balance.value, balance.decimals)
-    );
+    .map((balance) => {
+      return {
+        value: formatUnits(balance.value, balance.decimals),
+        symbol: balance.symbol,
+      };
+    });
 };
 
 const getBalances = async (address: Address, chainId: SupportedChainId) => {
@@ -73,7 +93,12 @@ export const createCSVEntry = async (
   nonce: number,
   stealthAddresses: string[],
   settings: FKStealthSafeAddressGenerationParams,
-  chainId: SupportedChainId
+  chainId: SupportedChainId,
+  meta?: {
+    ephemeralPrivateKey: Address;
+    spendingPrivateKey: Address;
+    spendingPublicKey: Address;
+  }
 ) => {
   try {
     const { stealthSafeAddress } = await predictStealthSafeAddressWithBytecode({
@@ -86,14 +111,16 @@ export const createCSVEntry = async (
     });
 
     const balances = await getBalances(stealthSafeAddress, chainId);
-    const settledBalances = handleSettledBalances(balances);
+    const settledBalances = filterSettledBalances(balances);
+    const filledBalances = fillRejectedBalances(settledBalances);
+
     return [
       nonce.toString(),
       stealthSafeAddress,
       ...stealthAddresses,
-      settings.exportPrivateKey ? getPrivateKeyForSigner() : "-",
-      ...settledBalances,
-      settledBalances.includes("N/A") ? "Partial Success" : "Success",
+      meta ? getPrivateKeyForSigner({ ...meta }) : "-",
+      ...filledBalances,
+      settledBalances.length < balances.length ? "Partial Success" : "Success",
     ];
   } catch (e) {
     return [

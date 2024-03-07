@@ -48,7 +48,7 @@ export const Index = () => {
   return (
     <SPage>
       <Header>
-        <h1>Stealth Account Recovery Assistant</h1>
+        <h1>Stealth Account Recovery Assistant (PoC)</h1>
         <ConnectButton />
       </Header>
       <Section>

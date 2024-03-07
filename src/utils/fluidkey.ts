@@ -1,5 +1,5 @@
 import * as secp from "@noble/secp256k1";
-import { PrivateKeyAccount, keccak256, toHex } from "viem";
+import { keccak256, pad, toHex } from "viem";
 
 import { Address } from "../types";
 
@@ -23,15 +23,23 @@ Secret: ${nonce}`;
   return message;
 };
 
-export const getPrivateKeyForSigner = () => {
-  // const sharedSecret = secp.getSharedSecret(
-  //   params.ephemeralPrivateKey.slice(2),
-  //   params.spendingPrivateAccount.publicKey.slice(2),
-  //   false
-  // );
+export const getPrivateKeyForSigner = (params: {
+  ephemeralPrivateKey: Address;
+  spendingPrivateKey: Address;
+  spendingPublicKey: Address;
+}) => {
+  const sharedSecret = secp.getSharedSecret(
+    params.ephemeralPrivateKey.slice(2),
+    params.spendingPublicKey.slice(2),
+    false
+  );
   // // Hash the shared secret
-  // const hashedSharedSecret = keccak256(toHex(sharedSecret.slice(1)));
+  const hashedSharedSecret = keccak256(toHex(sharedSecret.slice(1)));
 
-  // Todo: p = m * hash(S)
-  return "0x";
+  // Multiply the spending private key by the hashed shared secret
+  const stealthAddressSignerPrivateKey =
+    (BigInt(params.spendingPrivateKey) * BigInt(hashedSharedSecret)) %
+    secp.CURVE.n;
+
+  return pad(toHex(stealthAddressSignerPrivateKey));
 };
