@@ -1,4 +1,5 @@
 import { SafeVersion } from "@fluidkey/stealth-account-kit/lib/predictStealthSafeAddressTypes";
+import { GetBalanceReturnType } from "@wagmi/core";
 
 export type Address = `0x${string}`;
 export type SupportedChainId = 1 | 10 | 137 | 42_161 | 8453 | 100 | 11_155_111;
@@ -14,4 +15,17 @@ export type FKStealthSafeAddressGenerationParams = {
   endNonce: number;
   safeVersion: SafeVersion;
   useDefaultAddress: boolean;
+  exportPrivateKey?: boolean;
+};
+
+export type ErrorBalance = {
+  error: any;
+};
+
+export type SettledBalance = GetBalanceReturnType | ErrorBalance;
+
+export const IsErrorBalance = (
+  balanceOrError: SettledBalance
+): balanceOrError is ErrorBalance => {
+  return balanceOrError.hasOwnProperty("error");
 };

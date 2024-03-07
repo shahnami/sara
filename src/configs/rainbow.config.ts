@@ -11,11 +11,30 @@ import {
 
 // Types
 import { Address, SupportedChainId } from "../types";
+import { HttpTransportConfig, http } from "viem";
+
+const httpTransportConfig: HttpTransportConfig = {
+  batch: {
+    batchSize: 10,
+    wait: 1000,
+  },
+  retryCount: 2,
+  retryDelay: 2500,
+};
 
 export const config = getDefaultConfig({
   appName: "SARA",
   projectId: process.env.WALLET_CONNECT_CLOUD_PROJECT_ID ?? "YOUR_PROJECT_ID",
   chains: [mainnet, polygon, optimism, arbitrum, base, gnosis, sepolia],
+  transports: {
+    [mainnet.id]: http(undefined, httpTransportConfig),
+    [polygon.id]: http(undefined, httpTransportConfig),
+    [optimism.id]: http(undefined, httpTransportConfig),
+    [arbitrum.id]: http(undefined, httpTransportConfig),
+    [base.id]: http(undefined, httpTransportConfig),
+    [gnosis.id]: http(undefined, httpTransportConfig),
+    [sepolia.id]: http(undefined, httpTransportConfig),
+  },
 });
 
 export const TokenDeployments: {

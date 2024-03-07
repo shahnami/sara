@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
-import { formatUnits } from "viem";
 import { SafeVersion } from "@fluidkey/stealth-account-kit/lib/predictStealthSafeAddressTypes";
-
 import {
   generateStealthAddresses,
   generateEphemeralPrivateKey,
   extractViewingPrivateKeyNode,
-  predictStealthSafeAddressWithClient,
 } from "@fluidkey/stealth-account-kit";
 import { useChainId } from "wagmi";
-import { getBalance } from "@wagmi/core";
 import { privateKeyToAccount } from "viem/accounts";
 import { CSVLink } from "react-csv";
 
@@ -20,16 +16,15 @@ import styled from "styled-components";
 import { Card } from "./common/Card";
 import { Button } from "./common/Button";
 
-// Configs
-import { TokenDeployments, config } from "../configs/rainbow.config";
-
 // Types
 import {
-  Address,
   FKMetaStealthKeyPair,
   FKStealthSafeAddressGenerationParams,
   SupportedChainId,
 } from "../types";
+
+// View Model
+import { createCSVEntry } from "./KeyCard.model";
 
 const SKeyContainerDetails = styled.div`
   display: flex;
@@ -50,11 +45,11 @@ interface ComponentProps {
 }
 
 export const KeysCard = (props: ComponentProps) => {
-  const balanceOrder = ["ETH", "USDT", "USDC", "DAI"];
   const defaultExportHeaders = [
     "Nonce",
     "Safe Address",
     "Signer Address",
+    "Signer Private Key",
     "ETH Balance",
     "USDT Balance",
     "USDC Balance",
@@ -77,84 +72,6 @@ export const KeysCard = (props: ComponentProps) => {
 
   const currentChainId = useChainId();
 
-  const getBalances = async (address: Address) => {
-    // Some RPC endpoints fail when trying too many requests at once
-    // So we batch the requests in 2 groups to get all balances
-    const balances = [];
-
-    const ETHBalance = getBalance(config, {
-      address: address,
-      chainId: currentChainId,
-    });
-
-    const USDCBalance = getBalance(config, {
-      address: address,
-      token: TokenDeployments[currentChainId as SupportedChainId].USDC,
-      chainId: currentChainId,
-    });
-
-    balances.push(...(await Promise.all([ETHBalance, USDCBalance])));
-
-    const USDTBalance = getBalance(config, {
-      address: address,
-      token: TokenDeployments[currentChainId as SupportedChainId].USDT,
-      chainId: currentChainId,
-    });
-
-    const DAIBalance = getBalance(config, {
-      address: address,
-      token: TokenDeployments[currentChainId as SupportedChainId].DAI,
-      chainId: currentChainId,
-    });
-
-    balances.push(...(await Promise.all([USDTBalance, DAIBalance])));
-
-    return balances;
-  };
-
-  const createNonceEntry = async (
-    nonce: number,
-    stealthAddresses: string[]
-  ) => {
-    try {
-      const { stealthSafeAddress } = await predictStealthSafeAddressWithClient({
-        chainId: props.settings.chainId,
-        threshold: 1,
-        stealthAddresses,
-        useDefaultAddress: props.settings.useDefaultAddress,
-        safeVersion: props.settings.safeVersion,
-      });
-
-      const balances = await getBalances(stealthSafeAddress);
-
-      return [
-        nonce.toString(),
-        stealthSafeAddress,
-        ...stealthAddresses,
-        ...balances
-          .sort((a, b) => {
-            return (
-              balanceOrder.indexOf(a.symbol) - balanceOrder.indexOf(b.symbol)
-            );
-          })
-          .map((balance) => formatUnits(balance.value, balance.decimals)),
-        "Success",
-      ];
-    } catch (e) {
-      console.error(e);
-      return [
-        nonce.toString(),
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        `Failed: ${(e as Error).message}`,
-      ];
-    }
-  };
-
   const retrieveStealthAddresses = async () => {
     setStealthAddressData([defaultExportHeaders]);
     if (props.keys?.viewingPrivateKey && props.keys?.spendingPrivateKey) {
@@ -170,7 +87,7 @@ export const KeysCard = (props: ComponentProps) => {
       );
       const spendingPublicKey = spendingAccount.publicKey;
 
-      const promises = [];
+      const promises: Promise<string[]>[] = [];
       for (
         let i = props.settings.startNonce;
         i < props.settings.endNonce;
@@ -187,7 +104,14 @@ export const KeysCard = (props: ComponentProps) => {
           ephemeralPrivateKey: ephemeralPrivateKey,
         });
 
-        promises.push(createNonceEntry(i, stealthAddresses));
+        promises.push(
+          createCSVEntry(
+            i,
+            stealthAddresses,
+            props.settings,
+            currentChainId as SupportedChainId
+          )
+        );
       }
 
       const data = await Promise.all(promises);

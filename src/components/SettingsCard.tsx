@@ -18,6 +18,7 @@ export const SettingsCard = (props: ComponentProps) => {
       endNonce: 5,
       safeVersion: "1.3.0",
       useDefaultAddress: true,
+      exportPrivateKey: false,
     });
 
   useEffect(() => {
@@ -65,7 +66,6 @@ export const SettingsCard = (props: ComponentProps) => {
             type="checkbox"
             checked={settings.useDefaultAddress}
             onChange={(event) => {
-              console.log(event.target.checked);
               setSettings((prev) => {
                 return {
                   ...prev,
@@ -103,6 +103,21 @@ export const SettingsCard = (props: ComponentProps) => {
                 };
               })
             }
+          />
+        </p>
+        <p>
+          <b>export private keys:</b>{" "}
+          <input
+            type="checkbox"
+            checked={settings.exportPrivateKey}
+            onChange={(event) => {
+              setSettings((prev) => {
+                return {
+                  ...prev,
+                  exportPrivateKey: event.target.checked,
+                };
+              });
+            }}
           />
         </p>
       </div>
