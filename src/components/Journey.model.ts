@@ -1,13 +1,24 @@
 import { predictStealthSafeAddressWithBytecode } from "@fluidkey/stealth-account-kit";
 import { formatUnits } from "viem";
 import { GetBalanceReturnType, getBalance } from "@wagmi/core";
+import { isEmpty } from "lodash";
 
 // Config
-import { TokenDeployments, config } from "../configs/rainbow.config";
-import { SAFE_PROXY_BYTECODE, getPrivateKeyForSigner } from "../utils/fluidkey";
+import { TokenDeployments, config } from "@configs/rainbow.config";
+import {
+  SAFE_PROXY_BYTECODE,
+  SupportedChainIds,
+  SupportedSafeVersions,
+  getPrivateKeyForSigner,
+} from "@utils/fluidkey";
 
 // Types
-import { Address, CreateCSVEntryParameters, SupportedChainId } from "../types";
+import {
+  Address,
+  CreateCSVEntryParams,
+  FluidKeyStealthSafeAddressGenerationParams,
+  SupportedChainId,
+} from "@typing/index";
 
 export const MAX_BATCH_SIZE = 30;
 const balanceOrder = ["ETH", "USDT", "USDC", "DAI"];
@@ -86,7 +97,10 @@ const getBalances = async (address: Address, chainId: SupportedChainId) => {
   return Promise.allSettled([ETHBalance, USDCBalance, USDTBalance, DAIBalance]);
 };
 
-export const createCSVEntry = async (params: CreateCSVEntryParameters) => {
+export const createCSVEntry = async (
+  params: CreateCSVEntryParams,
+  callback: () => void
+) => {
   try {
     const { stealthSafeAddress } = predictStealthSafeAddressWithBytecode({
       safeProxyBytecode: SAFE_PROXY_BYTECODE,
@@ -101,11 +115,13 @@ export const createCSVEntry = async (params: CreateCSVEntryParameters) => {
     const settledBalances = filterSettledBalances(balances);
     const filledBalances = fillRejectedBalances(settledBalances);
 
+    callback();
+
     return [
       params.nonce.toString(),
       stealthSafeAddress,
       ...params.stealthAddresses,
-      params.settings.exportPrivateKey
+      params.settings.exportPrivateKeys
         ? getPrivateKeyForSigner({ ...params.meta })
         : "-",
       ...filledBalances,
@@ -124,4 +140,63 @@ export const createCSVEntry = async (params: CreateCSVEntryParameters) => {
       `Failed: ${(e as Error).message}`,
     ];
   }
+};
+
+export const defaultExportHeaders = [
+  "Nonce",
+  "Safe Address",
+  "Signer Address",
+  "Signer Private Key",
+  "ETH Balance",
+  "USDT Balance",
+  "USDC Balance",
+  "DAI Balance",
+  "Status",
+];
+
+export const validateSettings = (
+  setting: keyof FluidKeyStealthSafeAddressGenerationParams,
+  settings: FluidKeyStealthSafeAddressGenerationParams
+): boolean => {
+  switch (setting) {
+    case "chainId":
+      if (
+        !isFinite(settings.chainId) ||
+        !SupportedChainIds.includes(settings.chainId)
+      ) {
+        return false;
+      }
+      break;
+    case "startNonce":
+      if (
+        !isFinite(settings.startNonce) ||
+        (settings.startNonce as any) === "" ||
+        settings.startNonce < 0 ||
+        settings.startNonce > settings.endNonce
+      ) {
+        return false;
+      }
+      break;
+    case "endNonce":
+      if (
+        !isFinite(settings.endNonce as number) ||
+        (settings.endNonce as any) === "" ||
+        settings.endNonce < 0 ||
+        settings.endNonce < settings.startNonce
+      ) {
+        return false;
+      }
+      break;
+    case "safeVersion":
+      if (
+        isEmpty(settings.safeVersion) ||
+        !SupportedSafeVersions.includes(settings.safeVersion)
+      ) {
+        return false;
+      }
+      break;
+    default:
+      return true;
+  }
+  return true;
 };

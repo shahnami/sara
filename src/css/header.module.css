@@ -1,0 +1,13 @@
+.header {
+  background-color: var(--background);
+  border-bottom: 1px solid var(--light-gray);
+  height: 10vh;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--u3);
+  padding-bottom: var(--u3);
+}

@@ -1,0 +1,15 @@
+.section {
+  background-color: var(--lighter-gray);
+  height: 80vh;
+  overflow-y: scroll;
+}
+
+.section .container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: var(--u3);
+  padding-bottom: var(--u3);
+  gap: var(--u2);
+}
