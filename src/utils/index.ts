@@ -21,5 +21,24 @@ export const downloadCSV = (chainId: number, data: string[][]) => {
   link.setAttribute("download", `${chainId}_stealth_addresses.csv`);
   document.body.appendChild(link); // Required for FF
 
-  link.click(); // This will download the data file named "my_data.csv".
+  link.click();
+};
+
+export const normalizeForRange = (
+  x: number,
+  rmin: number,
+  rmax: number,
+  tmin: number,
+  tmax: number
+) => {
+  /**
+   * 𝑟min denote the minimum of the range of your measurement
+   * 𝑟max denote the maximum of the range of your measurement
+   * 𝑡min denote the minimum of the range of your desired target scaling
+   * 𝑡max denote the maximum of the range of your desired target scaling
+   * x∈[𝑟min,𝑟max] denote your measurement to be scaled
+   * x ↦ x − 𝑟min / 𝑟max−𝑟min × (𝑡max−𝑡min) + 𝑡min
+   */
+
+  return (tmax - tmin) * ((x - rmin) / (rmax - rmin)) + tmin;
 };

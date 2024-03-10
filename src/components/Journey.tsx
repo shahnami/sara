@@ -74,7 +74,7 @@ export const Journey = (props: ComponentProps) => {
         description="Recover your stealth accounts"
       >
         <RecoverAddressesJourneyStep
-          chainId={currentChainId}
+          activeChainId={currentChainId}
           keys={keys}
           onStealthDataProcessed={(data) => setStealthAddressData(data)}
           onBack={() => setKeys(undefined)}
