@@ -1,23 +1,27 @@
-import { WagmiProvider } from "wagmi";
+import "@mantine/core/styles.css";
+import "@rainbow-me/rainbowkit/styles.css";
+import "@css/index.css";
+
+import { MantineProvider } from "@mantine/core";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { WagmiProvider } from "wagmi";
 
-// Styles
-import "@rainbow-me/rainbowkit/styles.css";
+import { config, myRainbowExtendedTheme } from "@configs/rainbow.config";
+import { theme } from "./theme";
 
 // Components
-import { Index } from "./pages/Index";
-
-// Configs
-import { config } from "./configs/rainbow.config";
+import { Index } from "@pages/Index";
 
 const queryClient = new QueryClient();
 const App = () => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <Index />
+        <RainbowKitProvider theme={myRainbowExtendedTheme}>
+          <MantineProvider theme={theme}>
+            <Index />
+          </MantineProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

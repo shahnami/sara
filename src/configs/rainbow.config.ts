@@ -1,4 +1,6 @@
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { merge } from "lodash";
+import { Theme, getDefaultConfig, lightTheme } from "@rainbow-me/rainbowkit";
+import { HttpTransportConfig, http } from "viem";
 import {
   arbitrum,
   base,
@@ -11,7 +13,6 @@ import {
 
 // Types
 import { Address, SupportedChainId } from "../types";
-import { HttpTransportConfig, http } from "viem";
 
 const httpTransportConfig: HttpTransportConfig = {
   batch: {
@@ -24,7 +25,8 @@ const httpTransportConfig: HttpTransportConfig = {
 
 export const config = getDefaultConfig({
   appName: "SARA",
-  projectId: process.env.WALLET_CONNECT_CLOUD_PROJECT_ID ?? "YOUR_PROJECT_ID",
+  projectId:
+    import.meta.env.WALLET_CONNECT_CLOUD_PROJECT_ID ?? "YOUR_PROJECT_ID",
   chains: [mainnet, polygon, optimism, arbitrum, base, gnosis, sepolia],
   transports: {
     [mainnet.id]: http(undefined, httpTransportConfig),
@@ -87,3 +89,9 @@ export const TokenDeployments: {
     DAI: "0x3e622317f8C93f7328350cF0B56d9eD4C620C5d6",
   },
 };
+
+export const myRainbowExtendedTheme = merge(lightTheme(), {
+  colors: {
+    accentColor: "#191919",
+  },
+} as Theme);

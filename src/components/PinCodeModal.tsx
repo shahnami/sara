@@ -1,84 +1,102 @@
 import { useState } from "react";
-import { useSignMessage, useAccount } from "wagmi";
 
-// Common Components
-import { Modal } from "./common/Modal";
-import { SecretPinInput } from "./common/PinInput";
-import { Note } from "./common/Note";
-
-// Utils
-import { getMessageToSign } from "../utils/fluidkey";
+import { Box, Button, Modal, PinInput, Notification } from "@mantine/core";
+import { IconSignature } from "@tabler/icons-react";
+import { useAccount, useSignMessage } from "wagmi";
+import { getMessageToSign } from "@utils/fluidkey";
 
 interface ComponentProps {
-  show: boolean;
+  open: boolean;
   onSigned: (signature: `0x${string}`) => void;
   onError?: (error: any) => void;
   onClose: () => void;
 }
 
 export const PinCodeModal = (props: ComponentProps) => {
-  const [isValid, setValid] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
-    undefined
-  );
-  const [secretPin, setSecretPin] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string>();
+  const [pin, setPin] = useState<string>();
 
   const { signMessage } = useSignMessage();
   const { isConnected, address } = useAccount();
 
   const PIN_LENGTH = 4;
 
-  const onCloseModal = () => {
-    props.onClose();
-  };
-
-  const onSubmitModal = () => {
-    if (isValid && isConnected && address && secretPin) {
+  const onRequestSignature = () => {
+    if (isConnected && address && pin) {
       signMessage(
         {
-          message: getMessageToSign({ address: address, secret: secretPin }),
+          message: getMessageToSign({ address: address, secret: pin }),
         },
         {
           onSuccess: (data) => {
+            setPin(undefined);
+            setError(undefined);
             props.onSigned(data);
+            props.onClose();
           },
           onError: (error) => {
             if (props.onError) props.onError(error);
-            setErrorMessage(error.message);
+            setError(error.message);
           },
         }
       );
     }
   };
 
-  const onSecretInputChange = (value: string, _: number) => {
-    if (value.length === PIN_LENGTH) {
-      setValid(true);
-    } else {
-      setValid(false);
+  const onPinChange = (value: string) => {
+    if (value.length !== PIN_LENGTH) {
+      setPin(undefined);
     }
   };
 
-  const onSecretInputComplete = (value: string, _: number) => {
-    setSecretPin(value);
+  const onPinComplete = (value: string) => {
+    setPin(value);
   };
 
   return (
     <Modal
-      cancelLabel="Cancel"
-      submitLabel="Sign"
-      show={props.show}
-      onClose={onCloseModal}
-      onSubmit={onSubmitModal}
-      isValid={isValid}
+      title="Enter your 4-digit PIN"
+      opened={props.open}
+      onClose={props.onClose}
+      centered={true}
     >
-      <h1>Enter your PIN code</h1>
-      <SecretPinInput
-        length={PIN_LENGTH}
-        onChange={onSecretInputChange}
-        onComplete={onSecretInputComplete}
-      />
-      <Note show={!!errorMessage} type="error" note={errorMessage} />
+      <Box
+        style={{
+          padding: "var(--u3)",
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: "var(--u4)",
+        }}
+      >
+        <PinInput
+          length={PIN_LENGTH}
+          inputMode="decimal"
+          type="number"
+          autoFocus={true}
+          size="lg"
+          onChange={onPinChange}
+          onComplete={onPinComplete}
+        />
+
+        {error && (
+          <Notification withCloseButton={false} withBorder color="red">
+            {error}
+          </Notification>
+        )}
+
+        <Button
+          fullWidth={true}
+          className="button"
+          variant="filled"
+          color="#191919"
+          leftSection={<IconSignature size={14} />}
+          onClick={onRequestSignature}
+          disabled={!pin}
+        >
+          Sign Message
+        </Button>
+      </Box>
     </Modal>
   );
 };
