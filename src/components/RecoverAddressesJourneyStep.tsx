@@ -26,6 +26,7 @@ import {
   FluidKeyStealthSafeAddressGenerationParams,
   SupportedChainId,
 } from "@typing/index";
+import { normalizeForRange } from "@utils/index";
 
 import {
   MAX_BATCH_SIZE,
@@ -35,7 +36,7 @@ import {
 } from "./Journey.model";
 
 interface ComponentProps {
-  chainId: number;
+  activeChainId: number;
   keys: FluidKeyMetaStealthKeyPair | undefined;
   onStealthDataProcessed: (data: string[][]) => void;
   onBack: () => void;
@@ -82,11 +83,12 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
       const spendingPublicKey = spendingAccount.publicKey;
 
       const promises = [];
+      let counter = 0;
       for (let i = settings.startNonce; i < settings.endNonce; i++) {
         const { ephemeralPrivateKey } = generateEphemeralPrivateKey({
           viewingPrivateKeyNode: derivedBIP32Node,
           nonce: BigInt(i),
-          chainId: props.chainId,
+          chainId: settings.chainId,
         });
 
         const { stealthAddresses } = generateStealthAddresses({
@@ -98,7 +100,7 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
           nonce: i,
           stealthAddresses,
           settings: settings,
-          chainId: props.chainId as SupportedChainId,
+          activeChainId: props.activeChainId as SupportedChainId,
           meta: {
             ephemeralPrivateKey: ephemeralPrivateKey,
             spendingPrivateKey: props.keys.spendingPrivateKey,
@@ -107,9 +109,17 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
         };
 
         promises.push(
-          createCSVEntry.bind(null, params, () =>
-            setProgress((i / settings.endNonce) * 100)
-          )
+          createCSVEntry.bind(null, params, () => {
+            setProgress(
+              normalizeForRange(
+                counter++,
+                0,
+                settings.endNonce - settings.startNonce,
+                0,
+                100
+              )
+            );
+          })
         );
       }
 

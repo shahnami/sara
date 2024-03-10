@@ -21,7 +21,7 @@ export type CreateCSVEntryParams = {
   nonce: number;
   stealthAddresses: string[];
   settings: FluidKeyStealthSafeAddressGenerationParams;
-  chainId: SupportedChainId;
+  activeChainId: SupportedChainId;
   meta: {
     ephemeralPrivateKey: Address;
     spendingPrivateKey: Address;

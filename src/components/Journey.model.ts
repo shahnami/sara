@@ -111,7 +111,12 @@ export const createCSVEntry = async (
       safeVersion: params.settings.safeVersion,
     });
 
-    const balances = await getBalances(stealthSafeAddress, params.chainId);
+    const balances = await getBalances(
+      stealthSafeAddress,
+      params.settings.chainId > 0
+        ? (params.settings.chainId as SupportedChainId)
+        : params.activeChainId
+    );
     const settledBalances = filterSettledBalances(balances);
     const filledBalances = fillRejectedBalances(settledBalances);
 
