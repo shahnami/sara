@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Button, Stepper } from "@mantine/core";
 import { useAccount, useChainId, useDisconnect } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 import { IconArrowLeft, IconDownload } from "@tabler/icons-react";
 
@@ -12,7 +13,6 @@ import { downloadCSV } from "@utils/index";
 import { FluidKeyMetaStealthKeyPair } from "@typing/index";
 
 import { defaultExportHeaders } from "./Journey.model";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 interface ComponentProps {
   onStepChanged: (step: number) => void;

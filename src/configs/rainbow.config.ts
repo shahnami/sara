@@ -17,10 +17,10 @@ import { Address, SupportedChainId } from "../types";
 const httpTransportConfig: HttpTransportConfig = {
   batch: {
     batchSize: 10,
-    wait: 1000,
+    wait: 0, // configured by bottleneck limiter `minTime`
   },
   retryCount: 2,
-  retryDelay: 2500,
+  retryDelay: 10000, // attempt to retry after 10 seconds if rate limited or errors for some reason
 };
 
 export const config = getDefaultConfig({
