@@ -5,7 +5,6 @@ import {
   generateStealthAddresses,
 } from "@fluidkey/stealth-account-kit";
 import { privateKeyToAccount } from "viem/accounts";
-import { parallelLimit } from "async";
 import {
   Box,
   Button,
@@ -30,9 +29,9 @@ import {
 import { normalizeForRange, truncateEthAddress } from "@utils/index";
 
 import {
-  MAX_BATCH_SIZE,
   createCSVEntry,
   defaultExportHeaders,
+  scheduleRequest,
   validateSettings,
 } from "./Journey.model";
 
@@ -83,7 +82,7 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
       );
       const spendingPublicKey = spendingAccount.publicKey;
 
-      const promises = [];
+      const promises: Promise<string[]>[] = [];
       let counter = 0;
       for (let i = settings.startNonce; i < settings.endNonce; i++) {
         const { ephemeralPrivateKey } = generateEphemeralPrivateKey({
@@ -110,30 +109,27 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
         };
 
         promises.push(
-          createCSVEntry.bind(null, params, () => {
-            setProgress(
-              normalizeForRange(
-                counter++,
-                0,
-                settings.endNonce - settings.startNonce,
-                0,
-                100
-              )
-            );
-          })
+          scheduleRequest<string[]>(
+            createCSVEntry.bind(null, params, () => {
+              setProgress(
+                normalizeForRange(
+                  counter++,
+                  0,
+                  settings.endNonce - settings.startNonce,
+                  0,
+                  100
+                )
+              );
+            })
+          )
         );
       }
 
-      parallelLimit(promises, MAX_BATCH_SIZE, (err, results) => {
-        if (err) {
-          console.error(err);
-        } else {
-          setStealthAddressData((prev) => {
-            return [...prev, ...(results as string[][])];
-          });
-        }
-        setIsLoading(false);
+      const results = await Promise.all(promises);
+      setStealthAddressData((prev) => {
+        return [...prev, ...results];
       });
+      setIsLoading(false);
     }
   };
 
@@ -200,11 +196,13 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
           </Button>
         </Box>
       </StepContent>
-      <br />
       {isLoading && (
-        <Progress animated={true} striped={true} value={progress} />
+        <>
+          <br />
+          <Progress animated={true} striped={true} value={progress} />
+        </>
       )}
-      <br />
+      {openSettings && <br />}
       <StepContent hidden={!openSettings}>
         <Collapse
           in={openSettings}

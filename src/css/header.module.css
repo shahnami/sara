@@ -1,13 +1,14 @@
 .header {
   background-color: var(--background);
   border-bottom: 1px solid var(--light-gray);
-  height: 10vh;
+  display: flex;
+  height: 100px;
 }
 
 .header .container {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-top: var(--u3);
-  padding-bottom: var(--u3);
+  width: 100%;
 }

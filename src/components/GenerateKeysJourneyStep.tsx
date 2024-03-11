@@ -95,7 +95,7 @@ export const GenerateKeysJourneyStep = (props: ComponentProps) => {
           </Button>
         </Box>
       </StepContent>
-      <br />
+      {openSettings && <br />}
       <StepContent hidden={!openSettings}>
         <Collapse
           in={openSettings}

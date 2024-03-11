@@ -8,4 +8,5 @@
   background-color: var(--background);
   border-radius: var(--u1);
   width: 100%;
+  overflow: scroll;
 }

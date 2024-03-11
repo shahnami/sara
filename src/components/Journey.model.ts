@@ -11,6 +11,7 @@ import {
   SupportedSafeVersions,
   getPrivateKeyForSigner,
 } from "@utils/fluidkey";
+import Bottleneck from "bottleneck";
 
 // Types
 import {
@@ -20,9 +21,19 @@ import {
   SupportedChainId,
 } from "@typing/index";
 
-export const MAX_BATCH_SIZE = 30;
 const balanceOrder = ["ETH", "USDT", "USDC", "DAI"];
 const chainNativeCurrencies = ["SEP"]; // Add any native currencies here that will be represented as ETH
+
+const limiter = new Bottleneck({
+  minTime: 50, // minimum time (in ms) between requests
+  maxConcurrent: 30, // maximum concurrent requests
+});
+
+export const scheduleRequest = <T>(call: () => Promise<T>) => {
+  return limiter.schedule(() => {
+    return call();
+  });
+};
 
 const convertToNativeCurrency = (symbol: string) => {
   return chainNativeCurrencies.includes(symbol) ? "ETH" : symbol;
