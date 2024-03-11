@@ -17,7 +17,7 @@ import { Address, SupportedChainId } from "../types";
 const httpTransportConfig: HttpTransportConfig = {
   batch: {
     batchSize: 10,
-    wait: 1000,
+    wait: 2500,
   },
   retryCount: 2,
   retryDelay: 2500,

@@ -15,6 +15,7 @@ import {
   Progress,
   Switch,
   TextInput,
+  Grid,
 } from "@mantine/core";
 import { IconArrowLeft, IconList } from "@tabler/icons-react";
 
@@ -26,7 +27,7 @@ import {
   FluidKeyStealthSafeAddressGenerationParams,
   SupportedChainId,
 } from "@typing/index";
-import { normalizeForRange } from "@utils/index";
+import { normalizeForRange, truncateEthAddress } from "@utils/index";
 
 import {
   MAX_BATCH_SIZE,
@@ -210,117 +211,153 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
           transitionDuration={250}
           transitionTimingFunction="linear"
         >
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "var(--u1)",
-              paddingBottom: "var(--smallUnit)",
-            }}
-          >
-            <b style={{ flex: "1 0 0" }}>Spending Private Key</b>
-            <Code block={true}>{props.keys?.spendingPrivateKey}</Code>
-            <CopyWithCheckButton value={props.keys?.spendingPrivateKey} />
-          </Box>
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "var(--u1)",
-              paddingBottom: "var(--u6)",
-            }}
-          >
-            <b style={{ flex: "1 0 0" }}>Viewing Private Key</b>
-            <Code block={true}>{props.keys?.viewingPrivateKey}</Code>
-            <CopyWithCheckButton value={props.keys?.viewingPrivateKey} />
-          </Box>
+          <Grid>
+            <Grid.Col span={6}>
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "var(--u1)",
+                  paddingBottom: "var(--smallUnit)",
+                  width: "100%",
+                }}
+              >
+                <b>Spending Private Key</b>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Code block={true}>
+                    {truncateEthAddress(props.keys?.spendingPrivateKey, 8)}
+                  </Code>
+                  <CopyWithCheckButton value={props.keys?.spendingPrivateKey} />
+                </div>
+              </Box>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "var(--u1)",
+                  width: "100%",
+                }}
+              >
+                <b>Viewing Private Key</b>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Code block={true}>
+                    {truncateEthAddress(props.keys?.viewingPrivateKey, 8)}
+                  </Code>
+                  <CopyWithCheckButton value={props.keys?.viewingPrivateKey} />
+                </div>
+              </Box>
+            </Grid.Col>
 
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "var(--u2)",
-            }}
-          >
-            <NumberInput
-              label="Chain ID"
-              placeholder={settings.chainId.toString()}
-              allowDecimal={false}
-              allowNegative={false}
-              allowLeadingZeros={false}
-              onChange={(v) => handleSettingsChange("chainId", v)}
-              error={
-                validateSettings("chainId", settings)
-                  ? undefined
-                  : "Invalid chain ID"
-              }
-            />
-            <TextInput
-              label="Safe Version"
-              placeholder={settings.safeVersion}
-              onChange={(v) =>
-                handleSettingsChange("safeVersion", v.target.value)
-              }
-              error={
-                validateSettings("safeVersion", settings)
-                  ? undefined
-                  : "Invalid version"
-              }
-            />
-            <NumberInput
-              label="First Nonce"
-              placeholder={settings.startNonce.toString()}
-              allowDecimal={false}
-              allowNegative={false}
-              allowLeadingZeros={false}
-              onChange={(v) => handleSettingsChange("startNonce", v)}
-              error={
-                validateSettings("startNonce", settings)
-                  ? undefined
-                  : "Invalid nonce"
-              }
-            />
-            <NumberInput
-              label="Last Nonce"
-              placeholder={settings.endNonce.toString()}
-              allowDecimal={false}
-              allowNegative={false}
-              allowLeadingZeros={false}
-              onChange={(v) => handleSettingsChange("endNonce", v)}
-              error={
-                validateSettings("endNonce", settings)
-                  ? undefined
-                  : "Invalid nonce"
-              }
-            />
-          </Box>
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "var(--u2)",
-              paddingTop: "var(--u2)",
-            }}
-          >
-            <Switch
-              label="Use Default Address"
-              checked={settings.useDefaultAddress}
-              description="When enabled, the Safe default address will be used."
-              onChange={(v) =>
-                handleSettingsChange("useDefaultAddress", v.target.checked)
-              }
-            />
-            <Switch
-              label="Export Private Keys"
-              checked={settings.exportPrivateKeys}
-              description="When enabled, the output will contain private keys for each stealth address. Use with caution!"
-              onChange={(v) =>
-                handleSettingsChange("exportPrivateKeys", v.target.checked)
-              }
-            />
-          </Box>
+            <Grid.Col span={12}>
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "var(--u2)",
+                }}
+              >
+                <NumberInput
+                  label="Chain ID"
+                  placeholder={settings.chainId.toString()}
+                  allowDecimal={false}
+                  allowNegative={false}
+                  allowLeadingZeros={false}
+                  onChange={(v) => handleSettingsChange("chainId", v)}
+                  error={
+                    validateSettings("chainId", settings)
+                      ? undefined
+                      : "Invalid chain ID"
+                  }
+                />
+                <TextInput
+                  label="Safe Version"
+                  placeholder={settings.safeVersion}
+                  onChange={(v) =>
+                    handleSettingsChange("safeVersion", v.target.value)
+                  }
+                  error={
+                    validateSettings("safeVersion", settings)
+                      ? undefined
+                      : "Invalid version"
+                  }
+                />
+                <NumberInput
+                  label="First Nonce"
+                  placeholder={settings.startNonce.toString()}
+                  allowDecimal={false}
+                  allowNegative={false}
+                  allowLeadingZeros={false}
+                  onChange={(v) => handleSettingsChange("startNonce", v)}
+                  error={
+                    validateSettings("startNonce", settings)
+                      ? undefined
+                      : "Invalid nonce"
+                  }
+                />
+                <NumberInput
+                  label="Last Nonce"
+                  placeholder={settings.endNonce.toString()}
+                  allowDecimal={false}
+                  allowNegative={false}
+                  allowLeadingZeros={false}
+                  onChange={(v) => handleSettingsChange("endNonce", v)}
+                  error={
+                    validateSettings("endNonce", settings)
+                      ? undefined
+                      : "Invalid nonce"
+                  }
+                />
+              </Box>
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "var(--u2)",
+                }}
+              >
+                <Switch
+                  label="Use Default Address"
+                  checked={settings.useDefaultAddress}
+                  description="When enabled, the Safe default address will be used."
+                  onChange={(v) =>
+                    handleSettingsChange("useDefaultAddress", v.target.checked)
+                  }
+                />
+                <Switch
+                  label="Export Private Keys"
+                  checked={settings.exportPrivateKeys}
+                  description="When enabled, the output will contain private keys for each stealth address. Use with caution!"
+                  onChange={(v) =>
+                    handleSettingsChange("exportPrivateKeys", v.target.checked)
+                  }
+                />
+              </Box>
+            </Grid.Col>
+          </Grid>
         </Collapse>
       </StepContent>
     </>
