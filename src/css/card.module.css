@@ -1,8 +1,6 @@
 .box {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  justify-content: center;
   padding: var(--u2);
   color: var(--primary);
   background-color: var(--background);
