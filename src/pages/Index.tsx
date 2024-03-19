@@ -1,14 +1,14 @@
-import { useState } from "react";
 import { Button } from "@mantine/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { IconBrandGithub } from "@tabler/icons-react";
+import { useState } from "react";
 
+import { Journey } from "@components/Journey";
+import { StealthAddressStickyTable } from "@components/StealthAddressStickyTable";
 import { Card } from "@components/common/Card";
+import { Footer } from "@components/common/Footer";
 import { Header } from "@components/common/Header";
 import { Section } from "@components/common/Section";
-import { Footer } from "@components/common/Footer";
-import { StealthAddressStickyTable } from "@components/StealthAddressStickyTable";
-import { Journey } from "@components/Journey";
 
 import { Address } from "@typing/index";
 
@@ -59,7 +59,7 @@ export const Index = () => {
         <p>
           Learn more about the mission, values, and the team behind{" "}
           <a href="https://fluidkey.com" target="_blank">
-            FluidKey
+            Fluidkey
           </a>
           .
         </p>

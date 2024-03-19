@@ -1,5 +1,5 @@
-import { merge } from "lodash";
 import { Theme, getDefaultConfig, lightTheme } from "@rainbow-me/rainbowkit";
+import { merge } from "lodash";
 import { HttpTransportConfig, http } from "viem";
 import {
   arbitrum,
@@ -23,21 +23,23 @@ const httpTransportConfig: HttpTransportConfig = {
   retryDelay: 10000, // attempt to retry after 10 seconds if rate limited or errors for some reason
 };
 
-export const config = getDefaultConfig({
-  appName: "SARA",
-  projectId:
-    import.meta.env.WALLET_CONNECT_CLOUD_PROJECT_ID ?? "YOUR_PROJECT_ID",
-  chains: [mainnet, polygon, optimism, arbitrum, base, gnosis, sepolia],
-  transports: {
-    [mainnet.id]: http(undefined, httpTransportConfig),
-    [polygon.id]: http(undefined, httpTransportConfig),
-    [optimism.id]: http(undefined, httpTransportConfig),
-    [arbitrum.id]: http(undefined, httpTransportConfig),
-    [base.id]: http(undefined, httpTransportConfig),
-    [gnosis.id]: http(undefined, httpTransportConfig),
-    [sepolia.id]: http(undefined, httpTransportConfig),
-  },
-});
+export function getConfig(transport: string | undefined) {
+  return getDefaultConfig({
+    appName: "SARA",
+    projectId:
+      import.meta.env.WALLET_CONNECT_CLOUD_PROJECT_ID ?? "YOUR_PROJECT_ID",
+    chains: [mainnet, polygon, optimism, arbitrum, base, gnosis, sepolia],
+    transports: {
+      [mainnet.id]: http(transport, httpTransportConfig),
+      [polygon.id]: http(transport, httpTransportConfig),
+      [optimism.id]: http(transport, httpTransportConfig),
+      [arbitrum.id]: http(transport, httpTransportConfig),
+      [base.id]: http(transport, httpTransportConfig),
+      [gnosis.id]: http(transport, httpTransportConfig),
+      [sepolia.id]: http(transport, httpTransportConfig),
+    },
+  });
+}
 
 export const TokenDeployments: {
   [key in SupportedChainId]: {

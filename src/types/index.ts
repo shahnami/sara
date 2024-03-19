@@ -15,6 +15,7 @@ export type FluidKeyStealthSafeAddressGenerationParams = {
   safeVersion: SafeVersion;
   useDefaultAddress: boolean;
   exportPrivateKeys?: boolean;
+  customTransport?: string | undefined;
 };
 
 export type CreateCSVEntryParams = {

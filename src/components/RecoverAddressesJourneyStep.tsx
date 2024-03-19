@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
 import {
   extractViewingPrivateKeyNode,
   generateEphemeralPrivateKey,
   generateStealthAddresses,
 } from "@fluidkey/stealth-account-kit";
-import { privateKeyToAccount } from "viem/accounts";
 import {
   Box,
   Button,
   Code,
   Collapse,
+  Grid,
   NumberInput,
   Progress,
   Switch,
   TextInput,
-  Grid,
 } from "@mantine/core";
 import { IconArrowLeft, IconList } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { privateKeyToAccount } from "viem/accounts";
 
 import { StepContent } from "@components/StepContent";
 import { CopyWithCheckButton } from "@components/common/CopyButton";
@@ -51,7 +51,7 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
     useState<FluidKeyStealthSafeAddressGenerationParams>({
       chainId: 0,
       startNonce: 0,
-      endNonce: 5,
+      endNonce: 100,
       safeVersion: "1.3.0",
       useDefaultAddress: true,
       exportPrivateKeys: true,
@@ -287,6 +287,13 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
                     validateSettings("chainId", settings)
                       ? undefined
                       : "Invalid chain ID"
+                  }
+                />
+                <TextInput
+                  label="Custom RPC URL"
+                  placeholder="https://rpc.example.com"
+                  onChange={(v) =>
+                    handleSettingsChange("customTransport", v.target.value)
                   }
                 />
                 <TextInput

@@ -1,10 +1,10 @@
 import { predictStealthSafeAddressWithBytecode } from "@fluidkey/stealth-account-kit";
-import { formatUnits } from "viem";
 import { GetBalanceReturnType, getBalance } from "@wagmi/core";
 import { isEmpty } from "lodash";
+import { formatUnits } from "viem";
 
 // Config
-import { TokenDeployments, config } from "@configs/rainbow.config";
+import { TokenDeployments, getConfig } from "@configs/rainbow.config";
 import {
   SAFE_PROXY_BYTECODE,
   SupportedChainIds,
@@ -25,8 +25,8 @@ const balanceOrder = ["ETH", "USDT", "USDC", "DAI"];
 const chainNativeCurrencies = ["SEP"]; // Add any native currencies here that will be represented as ETH
 
 const limiter = new Bottleneck({
-  minTime: 50, // minimum time (in ms) between requests
-  maxConcurrent: 30, // maximum concurrent requests
+  minTime: 200, // minimum time (in ms) between requests
+  maxConcurrent: 10, // maximum concurrent requests
 });
 
 export const scheduleRequest = <T>(call: () => Promise<T>) => {
@@ -81,7 +81,9 @@ const filterSettledBalances = (
     });
 };
 
-const getBalances = async (address: Address, chainId: SupportedChainId) => {
+const getBalances = async (address: Address, chainId: SupportedChainId, customTransport?: string) => {
+  const config = getConfig(customTransport);
+
   const ETHBalance = getBalance(config, {
     address: address,
     chainId: chainId,
@@ -126,7 +128,8 @@ export const createCSVEntry = async (
       stealthSafeAddress,
       params.settings.chainId > 0
         ? (params.settings.chainId as SupportedChainId)
-        : params.activeChainId
+        : params.activeChainId,
+      params.settings.customTransport
     );
     const settledBalances = filterSettledBalances(balances);
     const filledBalances = fillRejectedBalances(settledBalances);
