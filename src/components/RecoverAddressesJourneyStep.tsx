@@ -290,6 +290,13 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
                   }
                 />
                 <TextInput
+                  label="Custom RPC URL"
+                  placeholder="https://rpc.example.com"
+                  onChange={(v) =>
+                    handleSettingsChange("customTransport", v.target.value)
+                  }
+                />
+                <TextInput
                   label="Safe Version"
                   placeholder={settings.safeVersion}
                   onChange={(v) =>
