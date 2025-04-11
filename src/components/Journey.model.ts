@@ -1,4 +1,4 @@
-import { predictStealthSafeAddressWithBytecode, predictStealthSafeAddressWithClient } from "@fluidkey/stealth-account-kit";
+import { predictStealthSafeAddressWithBytecode } from "@fluidkey/stealth-account-kit";
 import { GetBalanceReturnType, getBalance } from "@wagmi/core";
 import { isEmpty } from "lodash";
 import { formatUnits } from "viem";
