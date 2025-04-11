@@ -122,6 +122,10 @@ export const createCSVEntry = async (
       stealthAddresses: params.stealthAddresses,
       useDefaultAddress: params.settings.useDefaultAddress,
       safeVersion: params.settings.safeVersion,
+      initializerExtraFields: {
+        to: params.settings.initializerTo,
+        data: params.settings.initializerData,
+      },
     });
 
     const balances = await getBalances(

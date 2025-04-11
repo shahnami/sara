@@ -18,7 +18,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fluidkey/stealth-account-kit": "^0.0.30",
+    "@fluidkey/stealth-account-kit": "1.1.0",
     "@mantine/core": "7.6.1",
     "@mantine/hooks": "7.6.1",
     "@rainbow-me/rainbowkit": "^2.0.1",

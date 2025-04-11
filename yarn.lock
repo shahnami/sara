@@ -562,10 +562,10 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
   integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
 
-"@fluidkey/stealth-account-kit@^0.0.30":
-  version "0.0.30"
-  resolved "https://registry.yarnpkg.com/@fluidkey/stealth-account-kit/-/stealth-account-kit-0.0.30.tgz#ce06c23ee73d4a95ed892a314113802495ce714d"
-  integrity sha512-Kvno62kqItfasgbuONjin1rzOQ3JEe95x3zIBCrFTJhoXTQ0gKo8+c8cpARyl9tSifoLuvB83gdjLlg8VHa5Yw==
+"@fluidkey/stealth-account-kit@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@fluidkey/stealth-account-kit/-/stealth-account-kit-1.1.0.tgz#7ee402c72883ffe52f955c989ea1ae9a53e93456"
+  integrity sha512-8iL3gI6rTH5x7ZA4tbRKwMBhhfftyV/5VvJBG1dYQWD/x0zHUWUfUcPIlD479dgWhR8X9QegcnG7h4ouhl5D3w==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     "@safe-global/safe-deployments" "1.29.0"
