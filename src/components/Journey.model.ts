@@ -1,4 +1,4 @@
-import { predictStealthSafeAddressWithBytecode } from "@fluidkey/stealth-account-kit";
+import { predictStealthSafeAddressWithBytecode, predictStealthSafeAddressWithClient } from "@fluidkey/stealth-account-kit";
 import { GetBalanceReturnType, getBalance } from "@wagmi/core";
 import { isEmpty } from "lodash";
 import { formatUnits } from "viem";
@@ -122,6 +122,10 @@ export const createCSVEntry = async (
       stealthAddresses: params.stealthAddresses,
       useDefaultAddress: params.settings.useDefaultAddress,
       safeVersion: params.settings.safeVersion,
+      initializerExtraFields: {
+        to: params.settings.initializerTo,
+        data: params.settings.initializerData,
+      },
     });
 
     const balances = await getBalances(

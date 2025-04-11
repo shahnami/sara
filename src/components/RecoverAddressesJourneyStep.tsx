@@ -362,6 +362,22 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
                 />
               </Box>
             </Grid.Col>
+            <Grid.Col span={12}>
+              <TextInput
+                label="Initializer to address"
+                placeholder="0x..."
+                onChange={(v) =>
+                  handleSettingsChange("initializerTo", v.target.value)
+                }
+              />
+              <TextInput
+                label="Initializer data"
+                placeholder="0x..."
+                onChange={(v) =>
+                  handleSettingsChange("initializerData", v.target.value)
+                }
+              />
+            </Grid.Col>
           </Grid>
         </Collapse>
       </StepContent>

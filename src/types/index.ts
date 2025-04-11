@@ -16,11 +16,13 @@ export type FluidKeyStealthSafeAddressGenerationParams = {
   useDefaultAddress: boolean;
   exportPrivateKeys?: boolean;
   customTransport?: string | undefined;
+  initializerTo?: Address | undefined;
+  initializerData?: Address | undefined;
 };
 
 export type CreateCSVEntryParams = {
   nonce: number;
-  stealthAddresses: string[];
+  stealthAddresses: Address[];
   settings: FluidKeyStealthSafeAddressGenerationParams;
   activeChainId: SupportedChainId;
   meta: {
