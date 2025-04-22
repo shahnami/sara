@@ -108,20 +108,21 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
           },
         };
 
+        const updateProgress = () => {
+          setProgress(
+            normalizeForRange(
+              counter++,
+              0,
+              settings.endNonce - settings.startNonce,
+              0,
+              100
+            )
+          );
+        };
         promises.push(
-          scheduleRequest<string[]>(
-            createCSVEntry.bind(null, params, () => {
-              setProgress(
-                normalizeForRange(
-                  counter++,
-                  0,
-                  settings.endNonce - settings.startNonce,
-                  0,
-                  100
-                )
-              );
-            })
-          )
+          settings.customTransport
+            ? scheduleRequest<string[]>(createCSVEntry.bind(null, params, updateProgress))
+            : createCSVEntry(params, updateProgress)
         );
       }
 
@@ -290,7 +291,7 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
                   }
                 />
                 <TextInput
-                  label="Custom RPC URL"
+                  label="Check balances onchain"
                   placeholder="https://rpc.example.com"
                   onChange={(v) =>
                     handleSettingsChange("customTransport", v.target.value)

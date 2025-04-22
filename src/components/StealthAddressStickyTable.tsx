@@ -59,10 +59,14 @@ export const StealthAddressStickyTable = (props: ComponentProps) => {
           <CopyWithCheckButton value={item.stealthSignerKey} />
         </div>
       </Table.Td>
-      <Table.Td>{item.balances.ETH}</Table.Td>
-      <Table.Td>{item.balances.USDT}</Table.Td>
-      <Table.Td>{item.balances.USDC}</Table.Td>
-      <Table.Td>{item.balances.DAI}</Table.Td>
+      {Object.values(item.balances).some((balance) => balance !== "-") && (
+        <>
+          <Table.Td>{item.balances.ETH}</Table.Td>
+          <Table.Td>{item.balances.USDT}</Table.Td>
+          <Table.Td>{item.balances.USDC}</Table.Td>
+          <Table.Td>{item.balances.DAI}</Table.Td>
+        </>
+      )}
       <Table.Td>{item.status}</Table.Td>
     </Table.Tr>
   ));
@@ -85,10 +89,16 @@ export const StealthAddressStickyTable = (props: ComponentProps) => {
             <Table.Th>Safe Address</Table.Th>
             <Table.Th>Signer Address</Table.Th>
             <Table.Th>Signer Key</Table.Th>
-            <Table.Th>ETH</Table.Th>
-            <Table.Th>USDC</Table.Th>
-            <Table.Th>USDT</Table.Th>
-            <Table.Th>DAI</Table.Th>
+            {Object.values(props.items[0].balances).some(
+              (balance) => balance !== "-"
+            ) && (
+              <>
+                <Table.Th>ETH</Table.Th>
+                <Table.Th>USDC</Table.Th>
+                <Table.Th>USDT</Table.Th>
+                <Table.Th>DAI</Table.Th>
+              </>
+            )}
             <Table.Th>Status</Table.Th>
           </Table.Tr>
         </Table.Thead>
