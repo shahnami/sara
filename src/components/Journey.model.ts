@@ -128,15 +128,21 @@ export const createCSVEntry = async (
       },
     });
 
-    const balances = await getBalances(
-      stealthSafeAddress,
-      params.settings.chainId > 0
-        ? (params.settings.chainId as SupportedChainId)
-        : params.activeChainId,
-      params.settings.customTransport
-    );
-    const settledBalances = filterSettledBalances(balances);
-    const filledBalances = fillRejectedBalances(settledBalances);
+    let filledBalances = ["-", "-", "-", "-"];
+    let status = "Success";
+
+    if (params.settings.customTransport) {
+      const balances = await getBalances(
+        stealthSafeAddress,
+        params.settings.chainId > 0
+          ? (params.settings.chainId as SupportedChainId)
+          : params.activeChainId,
+        params.settings.customTransport
+      );
+      const settledBalances = filterSettledBalances(balances);
+      filledBalances = fillRejectedBalances(settledBalances);
+      status = settledBalances.length < balances.length ? "Partial Success" : "Success";
+    }
 
     callback();
 
@@ -148,7 +154,7 @@ export const createCSVEntry = async (
         ? getPrivateKeyForSigner({ ...params.meta })
         : "-",
       ...filledBalances,
-      settledBalances.length < balances.length ? "Partial Success" : "Success",
+      status,
     ];
   } catch (e) {
     return [
