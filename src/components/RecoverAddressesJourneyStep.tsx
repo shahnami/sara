@@ -98,7 +98,7 @@ export const RecoverAddressesJourneyStep = (props: ComponentProps) => {
 
         const params = {
           nonce: i,
-          stealthAddresses,
+          stealthAddresses: stealthAddresses as `0x${string}`[],
           settings: settings,
           activeChainId: props.activeChainId as SupportedChainId,
           meta: {
