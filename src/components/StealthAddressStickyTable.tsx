@@ -59,7 +59,7 @@ export const StealthAddressStickyTable = (props: ComponentProps) => {
           <CopyWithCheckButton value={item.stealthSignerKey} />
         </div>
       </Table.Td>
-      {Object.values(item.balances).some((balance) => balance !== "-") && (
+      {props.items.length > 0 && Object.values(props.items[0].balances).some((balance) => balance !== "-") && (
         <>
           <Table.Td>{item.balances.ETH}</Table.Td>
           <Table.Td>{item.balances.USDT}</Table.Td>
@@ -89,7 +89,7 @@ export const StealthAddressStickyTable = (props: ComponentProps) => {
             <Table.Th>Safe Address</Table.Th>
             <Table.Th>Signer Address</Table.Th>
             <Table.Th>Signer Key</Table.Th>
-            {Object.values(props.items[0].balances).some(
+            {props.items.length > 0 && Object.values(props.items[0].balances).some(
               (balance) => balance !== "-"
             ) && (
               <>
