@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
   // Set the third parameter to '' to load all env regardless of the
   // `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '')
+  console.log('All env variables:', Object.keys(env));
   console.log('Build env variables:', {
     commit: env.VITE_VERCEL_GIT_COMMIT_SHA,
     vercel: env.VITE_VERCEL
