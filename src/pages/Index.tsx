@@ -18,9 +18,6 @@ export const Index = () => {
   const deployedGitCommit = process.env.VITE_VERCEL_GIT_COMMIT_SHA || 'main';
 
   console.log('Vercel env enabled:', process.env.VITE_VERCEL);
-  console.log('Git Provider:', process.env.VITE_VERCEL_GIT_PROVIDER);
-  console.log('Git Repo:', process.env.VITE_VERCEL_GIT_REPO_SLUG);
-  console.log('Git Branch:', process.env.VITE_VERCEL_GIT_COMMIT_REF);
 
   const GITHUB_URL = `https://github.com/shahnami/sara`;
   const handleGithubRedirect = () => {
