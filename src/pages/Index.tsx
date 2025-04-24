@@ -17,9 +17,10 @@ export const Index = () => {
   const [stealthAddressData, setStealthAddressData] = useState<string[][]>([]);
   const deployedGitCommit = process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || 'main';
 
-  console.log('Git Provider:', process.env.VERCEL_GIT_PROVIDER);
-  console.log('Git Repo:', process.env.VERCEL_GIT_REPO_SLUG);
-  console.log('Git Branch:', process.env.VERCEL_GIT_COMMIT_REF);
+  console.log('Vercel env enabled:', process.env.VERCEL, process.env.NEXT_PUBLIC_VERCEL);
+  console.log('Git Provider:', process.env.NEXT_PUBLIC_VERCEL_GIT_PROVIDER);
+  console.log('Git Repo:', process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG);
+  console.log('Git Branch:', process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF);
 
   const GITHUB_URL = `https://github.com/shahnami/sara`;
   const handleGithubRedirect = () => {
