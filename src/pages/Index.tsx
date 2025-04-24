@@ -15,11 +15,7 @@ import { Address } from "@typing/index";
 export const Index = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [stealthAddressData, setStealthAddressData] = useState<string[][]>([]);
-  const deployedGitCommit = process.env.__APP_COMMIT__ || 'main';
-
-  
-  console.log('Vercel env enabled1:', import.meta.env.VITE_VERCEL);
-  console.log('Vercel env enabled2:', process.env.__APP_VERCEL__);
+  const deployedGitCommit = __APP_COMMIT__ || 'main';
 
   const GITHUB_URL = `https://github.com/shahnami/sara`;
   const handleGithubRedirect = () => {
