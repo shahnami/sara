@@ -44,7 +44,7 @@ export const getPrivateKeyForSigner = (params: {
   return pad(toHex(stealthAddressSignerPrivateKey));
 };
 
-export const SupportedChainIds = [0, 1, 10, 137, 42_161, 8453, 100, 11_155_111];
+export const SupportedChainIds = [0, 1, 10, 137, 42_161, 8453, 100, 11_155_111, 56, 43_114];
 export const SupportedSafeVersions = [
   "1.4.1",
   "1.3.0",

@@ -56,3 +56,4 @@ export const AUTO_EARN_PROFILES: AutoEarnProfile[] = [
   },
 ];
 
+

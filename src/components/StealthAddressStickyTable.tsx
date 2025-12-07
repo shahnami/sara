@@ -18,6 +18,8 @@ const SAFE_CHAIN_PREFIX: Record<SupportedChainId, string> = {
   8453: "base",
   100: "gno",
   11_155_111: "sep",
+  56: "bsc",
+  43_114: "avax",
 };
 
 const buildSafeInterfaceUrl = (

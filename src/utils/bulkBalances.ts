@@ -14,7 +14,9 @@ import {
 } from "viem";
 import {
   arbitrum,
+  avalanche,
   base,
+  bsc,
   gnosis,
   mainnet,
   optimism,
@@ -39,6 +41,8 @@ const KNOWN_CHAINS: Record<number, Chain> = {
   [base.id]: base,
   [gnosis.id]: gnosis,
   [sepolia.id]: sepolia,
+  [bsc.id]: bsc,
+  [avalanche.id]: avalanche,
 };
 
 const getChainConfig = (chainId: number) => {

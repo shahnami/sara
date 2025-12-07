@@ -3,7 +3,9 @@ import { merge } from "lodash";
 import { HttpTransportConfig, http } from "viem";
 import {
   arbitrum,
+  avalanche,
   base,
+  bsc,
   gnosis,
   mainnet,
   optimism,
@@ -22,6 +24,8 @@ const ALL_SUPPORTED_CHAINS = [
   base,
   gnosis,
   sepolia,
+  bsc,
+  avalanche,
 ] as const;
 
 const httpTransportConfig: HttpTransportConfig = {
@@ -118,6 +122,18 @@ export const TokenDeployments: {
     USDC: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
     USDT: "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06",
     DAI: "0x3e622317f8C93f7328350cF0B56d9eD4C620C5d6",
+  },
+  // BSC
+  56: {
+    USDC: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+    USDT: "0x55d398326f99059fF775485246999027B3197955",
+    DAI: "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3",
+  },
+  // Avalanche
+  43_114: {
+    USDC: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+    USDT: "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+    DAI: "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
   },
 };
 
