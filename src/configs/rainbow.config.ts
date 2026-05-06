@@ -11,6 +11,7 @@ import {
   optimism,
   polygon,
   sepolia,
+  sonic,
 } from "wagmi/chains";
 
 // Types
@@ -24,6 +25,7 @@ const ALL_SUPPORTED_CHAINS = [
   base,
   gnosis,
   sepolia,
+  sonic,
   bsc,
   avalanche,
 ] as const;
@@ -134,6 +136,12 @@ export const TokenDeployments: {
     USDC: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
     USDT: "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
     DAI: "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
+  },
+  // Sonic
+  146: {
+    USDC: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+    USDT: "0x6047828dc181963ba44974801ff68e538da5eaf9",
+    DAI: "0x",
   },
 };
 

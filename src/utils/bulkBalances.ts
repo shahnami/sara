@@ -22,6 +22,7 @@ import {
   optimism,
   polygon,
   sepolia,
+  sonic,
 } from "viem/chains";
 
 const limiter = new Bottleneck({
@@ -41,6 +42,7 @@ const KNOWN_CHAINS: Record<number, Chain> = {
   [base.id]: base,
   [gnosis.id]: gnosis,
   [sepolia.id]: sepolia,
+  [sonic.id]: sonic,
   [bsc.id]: bsc,
   [avalanche.id]: avalanche,
 };
